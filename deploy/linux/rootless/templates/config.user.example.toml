@@ -1,0 +1,36 @@
+[api]
+base_url = "https://your-openai-compatible-endpoint/v1"
+model = "astron-code-latest"
+api_key_env = "INFOPROC_API_KEY"
+timeout_seconds = 120
+temperature = 0.7
+max_tokens = 4096
+
+[runtime]
+state_dir = "__INSTALL_ROOT__/state"
+log_level = "INFO"
+
+[storage]
+root_dir = "__INSTALL_ROOT__/storage"
+runs_dir_name = "runs"
+
+[scheduler]
+mode = "auto"
+document_workers = 2
+transcribe_workers = 1
+llm_workers = 2
+
+[transcription]
+device = "auto"
+fast_model = "small"
+balanced_model = "medium"
+quality_model = "large-v3"
+model_cache_dir = "__MODEL_CACHE_DIR__"
+
+[diarization]
+hf_token_env = "HF_TOKEN"
+hf_home = "__INSTALL_ROOT__/hf_home"
+
+[document]
+pdf_engine = "pypdf"
+office_converter = "soffice"

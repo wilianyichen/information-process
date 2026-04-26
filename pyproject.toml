@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "infoproc"
+version = "1.0.1"
+description = "Media-first information processing, compression, rank reduction, and distillation pipeline."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "OpenAI Codex" }
+]
+dependencies = [
+  "pypdf>=5.0.0",
+  "python-docx>=1.1.2",
+  "python-pptx>=1.0.2",
+]
+
+[project.optional-dependencies]
+media = [
+  "faster-whisper>=1.0.3",
+]
+diarize = [
+  "torch>=2.2",
+  "whisperx>=3.1.1",
+]
+dev = [
+  "build>=1.2.2",
+  "reportlab>=4.0.0",
+]
+
+[project.scripts]
+infoproc = "infoproc.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+infoproc = ["prompts/*.md"]
