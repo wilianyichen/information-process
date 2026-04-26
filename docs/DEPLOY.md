@@ -18,11 +18,25 @@ Suggested directories:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y python3 python3-venv ffmpeg libreoffice
+sudo apt-get install -y git python3 python3-venv ffmpeg libreoffice
+git clone https://github.com/wilianyichen/information-process.git /opt/infoproc/app
 cd /opt/infoproc/app
 bash scripts/bootstrap_linux.sh
 sudo cp deploy/linux/config.linux.example.toml /etc/infoproc/config.toml
 sudo cp deploy/linux/infoproc.env.example /etc/infoproc/infoproc.env
+```
+
+Edit `/etc/infoproc/infoproc.env` and fill:
+
+- `INFOPROC_API_KEY`
+- `INFOPROC_BASE_URL`
+- `INFOPROC_MODEL`
+- `HF_TOKEN` only when diarization is enabled
+
+Optional model predownload:
+
+```bash
+/opt/infoproc/app/.venv/bin/infoproc --config /etc/infoproc/config.toml download-model --profile quality --cache-dir /var/lib/infoproc/models
 ```
 
 Run a job:
@@ -30,6 +44,8 @@ Run a job:
 ```bash
 /opt/infoproc/app/.venv/bin/infoproc --config /etc/infoproc/config.toml process --input /srv/infoproc/input --recursive --profile quality
 ```
+
+For recurrent execution, wrap that command with `cron` or a `systemd timer`.
 
 ## Rootless Linux deployment
 

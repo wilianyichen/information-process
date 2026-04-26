@@ -6,6 +6,112 @@
 
 English version: [README-EN.md](README-EN.md)
 
+## 分发方式
+
+`infoproc` 现在已经是一个标准 Python package，仓库里定义了：
+
+- 模块名：`infoproc`
+- 命令名：`infoproc`
+
+但它**当前没有发布到 PyPI**。也就是说，普通用户不能直接执行 `pip install infoproc`，而是通过下面三种方式使用：
+
+1. 从 GitHub clone 源码后执行 `pip install -e .` 或 `pip install .`
+2. 安装构建出来的 wheel：`pip install dist/infoproc-1.0.1-py3-none-any.whl`
+3. 在 Linux 上使用 rootless bundle：`dist/infoproc-linux-user-1.0.1.tar.gz`
+
+只有在安装完成后，下面两种调用方式才成立：
+
+- `infoproc ...`
+- `python -m infoproc ...`
+
+如果只是仓库内部开发调试，也可以临时用 `PYTHONPATH=src python -m infoproc ...`，但这不是给普通用户的推荐路径。
+
+## 用户安装与部署
+
+### 1. 从 GitHub 安装
+
+```bash
+git clone https://github.com/wilianyichen/information-process.git
+cd information-process
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+pip install -e ".[media]"
+```
+
+如果你要开发或跑测试，再加：
+
+```bash
+pip install -e ".[dev]"
+```
+
+如果你要启用 `--diarize`，再加：
+
+```bash
+pip install -e ".[diarize]"
+```
+
+### 2. 初始化配置
+
+```bash
+infoproc --config ./config.toml init --storage-root ./outputs
+```
+
+### 3. 配置环境变量
+
+至少需要：
+
+```bash
+export INFOPROC_API_KEY="replace-me"
+export INFOPROC_BASE_URL="https://your-openai-compatible-endpoint/v1"
+export INFOPROC_MODEL="astron-code-latest"
+```
+
+只有启用 `--diarize` 时才需要：
+
+```bash
+export HF_TOKEN="replace-me"
+```
+
+### 4. 执行处理
+
+```bash
+infoproc --config ./config.toml process --input ./input --recursive --profile quality
+```
+
+如果需要多说话人分离：
+
+```bash
+infoproc --config ./config.toml process --input ./input --recursive --profile quality --diarize
+```
+
+### 5. 服务器 git clone 部署
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git python3 python3-venv ffmpeg libreoffice
+git clone https://github.com/wilianyichen/information-process.git
+cd information-process
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+pip install -e ".[media]"
+```
+
+然后准备配置：
+
+```bash
+sudo mkdir -p /etc/infoproc /var/lib/infoproc/state /var/lib/infoproc/models /var/lib/infoproc/hf_home /srv/infoproc/storage
+sudo cp deploy/linux/config.linux.example.toml /etc/infoproc/config.toml
+sudo cp deploy/linux/infoproc.env.example /etc/infoproc/infoproc.env
+```
+
+再执行：
+
+```bash
+.venv/bin/infoproc --config /etc/infoproc/config.toml process --input /srv/infoproc/input --recursive --profile quality
+```
+
 ## 当前能力
 
 - 音频：`mp3`, `wav`, `m4a`, `flac`, `aac`, `ogg`, `wma`
@@ -28,26 +134,26 @@ English version: [README-EN.md](README-EN.md)
 
 - `pdf` 默认先走 `pypdf`，如果抽不出来且系统有 `pdftotext`，会自动回退。
 - `doc/ppt` 依赖 `LibreOffice headless` 或 `soffice`。没有该依赖时会明确失败，不会静默透传。
-- 最终聚合输出为两个总结文件：`蒸馏汇总.md` 和 `降秩汇总.md`。
+- 最终聚合输出为两个总结文件：`蒸馏与降秩汇总.md` 和 `clean汇总.md`。
 
 ## CLI
 
 初始化配置：
 
 ```bash
-python -m infoproc --config ./config.toml init --storage-root ./outputs
+infoproc --config ./config.toml init --storage-root ./outputs
 ```
 
 处理一个文件或整个目录：
 
 ```bash
-python -m infoproc --config ./config.toml process --input ./input --recursive --profile quality --diarize
+infoproc --config ./config.toml process --input ./input --recursive --profile quality --diarize
 ```
 
 预下载模型：
 
 ```bash
-python -m infoproc --config ./config.toml download-model --profile quality --cache-dir ~/wuxiaoran/models
+infoproc --config ./config.toml download-model --profile quality --cache-dir ~/wuxiaoran/models
 ```
 
 兼容别名仍保留：

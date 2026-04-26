@@ -6,6 +6,110 @@ Current version: `1.0.1`
 
 Chinese version: [README.md](README.md)
 
+## Distribution
+
+`infoproc` is already structured as a standard Python package. The repository defines:
+
+- module name: `infoproc`
+- CLI command: `infoproc`
+
+It is **not published to PyPI yet**. Users cannot install it today with `pip install infoproc`. The supported paths are:
+
+1. clone the GitHub repository and run `pip install -e .` or `pip install .`
+2. install the built wheel: `pip install dist/infoproc-1.0.1-py3-none-any.whl`
+3. use the Linux rootless bundle: `dist/infoproc-linux-user-1.0.1.tar.gz`
+
+Only after installation will these work:
+
+- `infoproc ...`
+- `python -m infoproc ...`
+
+For repository development only, `PYTHONPATH=src python -m infoproc ...` is possible, but that is not the recommended end-user path.
+
+## Install and deploy
+
+### 1. Install from GitHub
+
+```bash
+git clone https://github.com/wilianyichen/information-process.git
+cd information-process
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+pip install -e ".[media]"
+```
+
+For development and tests:
+
+```bash
+pip install -e ".[dev]"
+```
+
+For diarization:
+
+```bash
+pip install -e ".[diarize]"
+```
+
+### 2. Initialize config
+
+```bash
+infoproc --config ./config.toml init --storage-root ./outputs
+```
+
+### 3. Set runtime environment variables
+
+```bash
+export INFOPROC_API_KEY="replace-me"
+export INFOPROC_BASE_URL="https://your-openai-compatible-endpoint/v1"
+export INFOPROC_MODEL="astron-code-latest"
+```
+
+Only for diarization:
+
+```bash
+export HF_TOKEN="replace-me"
+```
+
+### 4. Run processing
+
+```bash
+infoproc --config ./config.toml process --input ./input --recursive --profile quality
+```
+
+For speaker diarization:
+
+```bash
+infoproc --config ./config.toml process --input ./input --recursive --profile quality --diarize
+```
+
+### 5. Server deployment from git clone
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git python3 python3-venv ffmpeg libreoffice
+git clone https://github.com/wilianyichen/information-process.git
+cd information-process
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+pip install -e ".[media]"
+```
+
+Then prepare config:
+
+```bash
+sudo mkdir -p /etc/infoproc /var/lib/infoproc/state /var/lib/infoproc/models /var/lib/infoproc/hf_home /srv/infoproc/storage
+sudo cp deploy/linux/config.linux.example.toml /etc/infoproc/config.toml
+sudo cp deploy/linux/infoproc.env.example /etc/infoproc/infoproc.env
+```
+
+Run with:
+
+```bash
+.venv/bin/infoproc --config /etc/infoproc/config.toml process --input /srv/infoproc/input --recursive --profile quality
+```
+
 ## Supported inputs
 
 - audio: `mp3`, `wav`, `m4a`, `flac`, `aac`, `ogg`, `wma`
@@ -26,26 +130,26 @@ Notes:
 
 - PDFs use `pypdf` first and fall back to `pdftotext` when available.
 - Legacy `.doc` / `.ppt` require LibreOffice headless or `soffice`.
-- Final aggregate outputs are split into `蒸馏汇总.md` and `降秩汇总.md`.
+- Final aggregate outputs are split into `蒸馏与降秩汇总.md` and `clean汇总.md`.
 
 ## CLI
 
 Initialize config:
 
 ```bash
-python -m infoproc --config ./config.toml init --storage-root ./outputs
+infoproc --config ./config.toml init --storage-root ./outputs
 ```
 
 Process a file or folder:
 
 ```bash
-python -m infoproc --config ./config.toml process --input ./input --recursive --profile quality --diarize
+infoproc --config ./config.toml process --input ./input --recursive --profile quality --diarize
 ```
 
 Pre-download a model:
 
 ```bash
-python -m infoproc --config ./config.toml download-model --profile quality --cache-dir ~/wuxiaoran/models
+infoproc --config ./config.toml download-model --profile quality --cache-dir ~/wuxiaoran/models
 ```
 
 Compatibility aliases still exist:

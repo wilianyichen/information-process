@@ -2,6 +2,13 @@
 
 This project now deploys as a CLI-first processing tool. It no longer exposes a built-in HTTP API or queue service.
 
+`infoproc` is installable as a Python package, but it is not published to PyPI yet. The expected server workflow is:
+
+- clone the GitHub repository
+- create a venv
+- install from source with `pip install -e .`
+- run `infoproc process ...`
+
 Recommended shape:
 
 - app code and venv: `/opt/infoproc/app`
@@ -21,7 +28,11 @@ sudo apt-get update
 sudo apt-get install -y python3 python3-venv ffmpeg
 ```
 
-2. Copy the repo to `/opt/infoproc/app`.
+2. Clone the repo to `/opt/infoproc/app`.
+
+```bash
+git clone https://github.com/wilianyichen/information-process.git /opt/infoproc/app
+```
 
 3. Bootstrap the Python environment:
 
