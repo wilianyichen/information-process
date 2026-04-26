@@ -1,14 +1,14 @@
-# Security Policy
+# 安全策略
 
-## Reporting
+## 漏洞反馈
 
-If you find a security issue, do not open a public issue with exploit details.
+如果你发现安全问题，不要直接在公开 issue 里附上可利用细节。
 
-Send a private report that includes:
+私下反馈时至少包含：
 
-- affected version
-- reproduction steps
-- impact
-- any suggested mitigation
+- 影响版本
+- 复现步骤
+- 影响范围
+- 可能的缓解建议
 
-Until a private security contact is added to the public repository, coordinate fixes through the project owner before public disclosure.
+在仓库公开安全联系方式之前，建议先联系项目维护者，再决定公开披露时间。

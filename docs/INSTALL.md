@@ -1,45 +1,57 @@
-# Install
+# 安装说明
 
-## Is this already a publishable module?
+## 这个项目现在算不算一个可安装模块？
 
-Yes, in the Python packaging sense. This repository defines:
+算，但要把两个层面分开看：
 
-- module: `infoproc`
-- command: `infoproc`
+- 从 Python 打包角度看，它已经是一个标准 package
+- 从公共分发角度看，它**还没有发布到 PyPI**
 
-No, in the package-index sense. It is **not published to PyPI yet**. Users currently install it from source, from a built wheel, or from the rootless bundle.
+仓库里已经定义了：
 
-Supported installation paths:
+- 模块名：`infoproc`
+- CLI 命令：`infoproc`
 
-1. `git clone` + `pip install -e .`
-2. `pip install dist/infoproc-1.0.1-py3-none-any.whl`
-3. `dist/infoproc-linux-user-1.0.1.tar.gz`
+所以用户当前的可用安装路径是：
 
-## Local development
+1. `git clone` 后执行 `pip install -e .`
+2. 安装构建好的 wheel：`pip install dist/infoproc-1.0.1-py3-none-any.whl`
+3. 在 Linux 上使用 rootless bundle：`dist/infoproc-linux-user-1.0.1.tar.gz`
+
+也就是说，`python -m infoproc ...` 和 `infoproc ...` 只有在安装完成后才可用；不能假设用户只是下载源码就能直接运行。
+
+## 本地开发安装
 
 ### Windows
 
 ```powershell
+git clone https://github.com/wilianyichen/information-process.git
+cd information-process
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -U pip
-pip install -e ".[dev]"
 pip install -e ".[media]"
 ```
 
-Optional diarization support:
+如果要开发或跑测试，再加：
+
+```powershell
+pip install -e ".[dev]"
+```
+
+如果要启用 `--diarize`，再加：
 
 ```powershell
 pip install -e ".[diarize]"
 ```
 
-Initialize config:
+初始化配置：
 
 ```powershell
 infoproc --config .\config.toml init --storage-root .\outputs
 ```
 
-Set environment variables for the current session:
+设置当前会话环境变量：
 
 ```powershell
 $env:INFOPROC_API_KEY="replace-me"
@@ -47,10 +59,16 @@ $env:INFOPROC_BASE_URL="https://your-openai-compatible-endpoint/v1"
 $env:INFOPROC_MODEL="astron-code-latest"
 ```
 
-Optional:
+如果启用 `--diarize`：
 
 ```powershell
 $env:HF_TOKEN="replace-me"
+```
+
+运行：
+
+```powershell
+infoproc --config .\config.toml process --input .\input --recursive --profile quality
 ```
 
 ### Linux
@@ -64,32 +82,46 @@ python -m pip install -U pip
 pip install -e ".[media]"
 ```
 
-Optional diarization support:
+如果要启用 `--diarize`：
 
 ```bash
 pip install -e ".[diarize]"
 ```
 
-Optional development extras:
+如果要开发或跑测试：
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-Initialize config:
+初始化配置：
 
 ```bash
 infoproc --config ./config.toml init --storage-root ./outputs
 ```
 
-Run:
+设置环境变量：
+
+```bash
+export INFOPROC_API_KEY="replace-me"
+export INFOPROC_BASE_URL="https://your-openai-compatible-endpoint/v1"
+export INFOPROC_MODEL="astron-code-latest"
+```
+
+如果启用 `--diarize`：
+
+```bash
+export HF_TOKEN="replace-me"
+```
+
+运行：
 
 ```bash
 infoproc --config ./config.toml process --input ./input --recursive --profile quality
 ```
 
-## System dependencies
+## 系统依赖
 
-- `ffmpeg` and `ffprobe` for media normalization and probing
-- `LibreOffice headless` or `soffice` for `.doc` / `.ppt`
-- `HF_TOKEN` only when `--diarize` is enabled
+- `ffmpeg` 和 `ffprobe`：媒体探测与音频归一化
+- `LibreOffice headless` 或 `soffice`：处理 `.doc` / `.ppt`
+- `HF_TOKEN`：只有启用 `--diarize` 时需要

@@ -1,8 +1,8 @@
-# Contributing
+# 贡献说明
 
-## Development setup
+## 开发环境
 
-Use Python `3.11+`.
+建议使用 Python `3.11+`。
 
 ### Windows
 
@@ -14,7 +14,7 @@ pip install -e ".[dev]"
 pip install -e ".[media]"
 ```
 
-Only install diarization dependencies when needed:
+只有需要 `--diarize` 时再装：
 
 ```powershell
 pip install -e ".[diarize]"
@@ -30,7 +30,7 @@ pip install -e ".[dev]"
 pip install -e ".[media]"
 ```
 
-## Test and build
+## 测试与构建
 
 ```bash
 python -m unittest discover -s tests
@@ -38,8 +38,8 @@ python -m build
 python scripts/build_rootless_bundle.py
 ```
 
-## Coding notes
+## 开发约定
 
-- keep the public CLI centered on `init`, `process`, and `download-model`
-- keep runtime secrets out of the repository and use environment variables instead
-- prefer updating docs under `README.md` and `docs/` whenever user-facing behavior changes
+- 对外 CLI 以 `init`、`process`、`download-model` 为主
+- 不要把运行时密钥提交进仓库
+- 改动用户工作流时，要同步更新 `README.md` 和 `docs/`

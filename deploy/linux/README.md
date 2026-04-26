@@ -1,47 +1,47 @@
-# Linux deployment
+# Linux 部署说明
 
-This project now deploys as a CLI-first processing tool. It no longer exposes a built-in HTTP API or queue service.
+这个项目现在是 CLI-first 工具，不再对外暴露内置 HTTP API。
 
-`infoproc` is installable as a Python package, but it is not published to PyPI yet. The expected server workflow is:
+`infoproc` 已经是一个可安装的 Python package，但**还没有发布到 PyPI**。所以服务器上的标准使用方式是：
 
-- clone the GitHub repository
-- create a venv
-- install from source with `pip install -e .`
-- run `infoproc process ...`
+- clone GitHub 仓库
+- 创建 venv
+- 用 `pip install -e .` 从源码安装
+- 执行 `infoproc process ...`
 
-Recommended shape:
+## 推荐目录
 
-- app code and venv: `/opt/infoproc/app`
-- config file: `/etc/infoproc/config.toml`
-- environment file: `/etc/infoproc/infoproc.env`
-- runtime state: `/var/lib/infoproc/state`
-- storage root: `/srv/infoproc/storage`
-- model cache: `/var/lib/infoproc/models`
-- diarization cache: `/var/lib/infoproc/hf_home`
+- 应用代码和 venv：`/opt/infoproc/app`
+- 配置文件：`/etc/infoproc/config.toml`
+- 环境变量文件：`/etc/infoproc/infoproc.env`
+- 状态目录：`/var/lib/infoproc/state`
+- 保存目录：`/srv/infoproc/storage`
+- 模型缓存：`/var/lib/infoproc/models`
+- diarization 缓存：`/var/lib/infoproc/hf_home`
 
-## Install flow
+## 安装流程
 
-1. Install OS packages:
+### 1. 安装系统依赖
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y python3 python3-venv ffmpeg
+sudo apt-get install -y git python3 python3-venv ffmpeg libreoffice
 ```
 
-2. Clone the repo to `/opt/infoproc/app`.
+### 2. clone 仓库
 
 ```bash
 git clone https://github.com/wilianyichen/information-process.git /opt/infoproc/app
 ```
 
-3. Bootstrap the Python environment:
+### 3. 初始化 Python 环境
 
 ```bash
 cd /opt/infoproc/app
 bash scripts/bootstrap_linux.sh
 ```
 
-4. Copy the sample files:
+### 4. 复制配置样例
 
 ```bash
 sudo mkdir -p /etc/infoproc /var/lib/infoproc/state /var/lib/infoproc/models /var/lib/infoproc/hf_home /srv/infoproc/storage
@@ -49,31 +49,27 @@ sudo cp deploy/linux/config.linux.example.toml /etc/infoproc/config.toml
 sudo cp deploy/linux/infoproc.env.example /etc/infoproc/infoproc.env
 ```
 
-5. Fill in the real API key and base URL in `/etc/infoproc/infoproc.env`.
+### 5. 填写环境变量
 
-6. Run processing jobs directly or from cron:
+编辑 `/etc/infoproc/infoproc.env`，补齐：
+
+- `INFOPROC_API_KEY`
+- `INFOPROC_BASE_URL`
+- `INFOPROC_MODEL`
+
+如果启用 `--diarize`，再补：
+
+- `HF_TOKEN`
+
+### 6. 执行任务
 
 ```bash
 /opt/infoproc/app/.venv/bin/infoproc --config /etc/infoproc/config.toml process --input /srv/infoproc/input --recursive --profile quality
 ```
 
-## Config precedence
+## 无 sudo 场景
 
-1. CLI `--config`
-2. `INFOPROC_CONFIG`
-3. `./config.toml`
-4. `~/.config/infoproc/config.toml`
-5. `/etc/infoproc/config.toml`
+如果没有 `sudo`，用 rootless bundle：
 
-## Optional dependencies
-
-- Standard transcription needs `faster-whisper`.
-- Diarization needs `torch`, `whisperx`, and `HF_TOKEN`.
-- `.doc` / `.ppt` extraction needs LibreOffice headless or `soffice`.
-
-## No-sudo option
-
-If you do not have `sudo`, use the rootless bundle:
-
-- docs: `deploy/linux/rootless/README.md`
-- builder: `scripts/build_rootless_bundle.py`
+- 文档：`deploy/linux/rootless/README.md`
+- 打包脚本：`scripts/build_rootless_bundle.py`
