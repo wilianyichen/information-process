@@ -74,8 +74,8 @@ python -m infoproc --config ./config.toml download-model --profile quality --cac
         distill__md/
         rank__md/
         _summaries/
-          蒸馏汇总.md
-          降秩汇总.md
+          蒸馏与降秩汇总.md
+          clean汇总.md
       _manifests/
         run_manifest.json
         file_index.json
@@ -97,6 +97,13 @@ python -m infoproc --config ./config.toml download-model --profile quality --cac
 - `02_normalized/audio__wav/demo/lesson.wav`
 - `03_text_raw/plain_text__txt/demo/lesson.txt`
 - `05_final/distill__md/demo/lesson.md`
+
+汇总文件说明：
+
+- `05_final/_summaries/蒸馏与降秩汇总.md`
+- `05_final/_summaries/clean汇总.md`
+
+第一个文件会按相对路径汇总全部蒸馏与降秩结果；第二个文件会按相对路径汇总全部 clean 文本。即使某类内容为空，也会写入非空提示，避免出现空白汇总文件。
 
 ## 配置
 

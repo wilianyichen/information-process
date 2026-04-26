@@ -190,12 +190,12 @@ class RunLayout:
         return self.run_dir / self.FINAL_LAYER / "_summaries"
 
     @property
-    def distill_summary(self) -> Path:
-        return self.summary_dir / "蒸馏汇总.md"
+    def distill_rank_summary(self) -> Path:
+        return self.summary_dir / "蒸馏与降秩汇总.md"
 
     @property
-    def rank_summary(self) -> Path:
-        return self.summary_dir / "降秩汇总.md"
+    def clean_summary(self) -> Path:
+        return self.summary_dir / "clean汇总.md"
 
     def ensure_dirs(self) -> None:
         for path in (

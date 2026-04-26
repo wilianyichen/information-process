@@ -131,10 +131,8 @@ class Pipeline:
                 llm_executor.shutdown(wait=True)
 
         outputs = generate_final_summaries(layout.run_dir)
-        if outputs.distill_summary is not None:
-            self._log(None, f"[aggregate] wrote {outputs.distill_summary}")
-        if outputs.rank_summary is not None:
-            self._log(None, f"[aggregate] wrote {outputs.rank_summary}")
+        self._log(None, f"[aggregate] wrote {outputs.distill_rank_summary}")
+        self._log(None, f"[aggregate] wrote {outputs.clean_summary}")
 
         files = self._finalize_run(discovered)
         return RunResult(run_dir=layout.run_dir, run_manifest_path=layout.run_manifest, files=files)

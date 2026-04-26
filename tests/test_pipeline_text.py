@@ -107,8 +107,8 @@ class PipelineTextTests(unittest.TestCase):
             self.assertTrue((run_dir / "04_text_clean" / "clean_text__txt" / "note.txt").exists())
             self.assertTrue((run_dir / "05_final" / "distill__md" / "note.md").exists())
             self.assertTrue((run_dir / "05_final" / "rank__md" / "note.md").exists())
-            self.assertTrue((run_dir / "05_final" / "_summaries" / "蒸馏汇总.md").exists())
-            self.assertTrue((run_dir / "05_final" / "_summaries" / "降秩汇总.md").exists())
+            self.assertTrue((run_dir / "05_final" / "_summaries" / "蒸馏与降秩汇总.md").exists())
+            self.assertTrue((run_dir / "05_final" / "_summaries" / "clean汇总.md").exists())
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
@@ -142,10 +142,12 @@ class PipelineTextTests(unittest.TestCase):
             self.assertTrue((run_dir / "00_source" / "markdown__md" / "b.md").exists())
             self.assertTrue((run_dir / "05_final" / "distill__md" / "nested" / "a.md").exists())
             self.assertTrue((run_dir / "05_final" / "rank__md" / "b.md").exists())
-            distill_summary = (run_dir / "05_final" / "_summaries" / "蒸馏汇总.md").read_text(encoding="utf-8")
-            rank_summary = (run_dir / "05_final" / "_summaries" / "降秩汇总.md").read_text(encoding="utf-8")
-            self.assertIn("nested/a.md", distill_summary)
-            self.assertIn("b.md", rank_summary)
+            distill_rank_summary = (run_dir / "05_final" / "_summaries" / "蒸馏与降秩汇总.md").read_text(encoding="utf-8")
+            clean_summary = (run_dir / "05_final" / "_summaries" / "clean汇总.md").read_text(encoding="utf-8")
+            self.assertIn("nested/a.md", distill_rank_summary)
+            self.assertIn("b.md", distill_rank_summary)
+            self.assertIn("nested/a.txt", clean_summary)
+            self.assertIn("b.txt", clean_summary)
         finally:
             shutil.rmtree(root, ignore_errors=True)
 
